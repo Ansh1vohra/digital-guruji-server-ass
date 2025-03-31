@@ -14,16 +14,22 @@ app.get('/screenshot', async (req, res) => {
         // Capture the screenshot
         const response = await axios.get(screenshotUrl, { responseType: 'arraybuffer' });
 
-        // Crop the image to 500px width from the center (if needed)
+        // Crop the image to 500px width from the center and remove 50px from the bottom
         const buffer = Buffer.from(response.data, 'binary');
 
-        // Use sharp to crop the image to 500px width (centered)
+        // Use sharp to crop the image to 500px width (centered) and remove 50px from the bottom
         const image = sharp(buffer);
         const metadata = await image.metadata();
 
         const cropX = Math.floor((metadata.width - 500) / 2);  // Calculate the center cropping point
+        const cropHeight = metadata.height - 70;  // Remove 50px from the bottom
 
-        const croppedImage = await image.extract({ left: cropX, top: 0, width: 500, height: metadata.height }).toBuffer();
+        const croppedImage = await image.extract({ 
+            left: cropX, 
+            top: 0, 
+            width: 500, 
+            height: cropHeight 
+        }).toBuffer();
 
         // Send the cropped image as the response
         res.setHeader('Content-Type', 'image/jpeg');
