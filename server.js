@@ -9,15 +9,18 @@ app.use(express.static('public'));
 app.post('/screenshot', async (req, res) => {
     try {
         const browser = await puppeteer.launch({
-            headless: 'new',
+            headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
-        
+
         const page = await browser.newPage();
-        await page.goto('http://localhost:3000', { 
-            waitUntil: 'networkidle2' 
-        });
-        
+
+        // Use the request's origin to construct the URL
+        const origin = req.headers.origin; // Get the origin from headers
+        const url = `${origin}`; // Construct the URL
+
+        await page.goto(url, { waitUntil: 'networkidle2' });
+
         const screenshot = await page.screenshot({
             fullPage: true,
             type: 'png',
