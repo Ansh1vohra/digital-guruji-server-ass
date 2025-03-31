@@ -5,12 +5,8 @@ async function captureScreenshot() {
     btn.textContent = 'Capturing...';
     
     try {
-        const response = await fetch('/screenshot', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await fetch('/screenshot'); // Just use GET, no headers needed
+
 
         const blob = await response.blob();
         const downloadUrl = window.URL.createObjectURL(blob);
